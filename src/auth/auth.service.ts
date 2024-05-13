@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../users/user.service';
 import { User } from '../users/user.entity';
+import { UserNotValidException } from '../utils/custom.exception';
 
 @Injectable()
 export class AuthService {
@@ -11,11 +12,18 @@ export class AuthService {
     ) { }
 
     async validateUser(username: string, password: string): Promise<User | null> {
-        const user = await this.userService.findByUsername(username);
-        if (user && user.password === password) {
-            return user;
+        try {
+            const user = await this.userService.findByUsername(username);
+            if (user && user.password === password) {
+                return user;
+            }
+            throw new UserNotValidException('Invalid username or password');
+        } catch (error) {
+            if (error instanceof UserNotValidException) {
+                throw error
+            }
+            throw new HttpException('Something went wrong: ', error.message)
         }
-        return null;
     }
 
     async login(user: User): Promise<{ accessToken: string }> {

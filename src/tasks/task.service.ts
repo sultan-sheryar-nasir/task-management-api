@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Task } from './task.entity';
 import { CreateTaskDto, UpdateTaskDto } from '../dtos/task.dto';
 import { TaskCreationFailedException, TaskDeletionFailedException, TaskNotFoundException, TaskUpdateFailedException } from '../utils/custom.exception';
+import { ERRORS, QUERIES } from '../utils/constants';
 
 @Injectable()
 export class TaskService {
@@ -16,7 +17,7 @@ export class TaskService {
     try {
       return await this.taskRepository.find();
     } catch (error) {
-      throw new HttpException('Failed to retrieve tasks', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(ERRORS.RETRIVE_TASK_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -24,7 +25,7 @@ export class TaskService {
     try {
       return await this.taskRepository.find({ where: { isCompleted } });
     } catch (error) {
-      throw new HttpException('Failed to retrieve tasks', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(ERRORS.RETRIVE_TASK_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   async create(taskData: CreateTaskDto): Promise<Task> {
@@ -51,7 +52,7 @@ export class TaskService {
       if (error instanceof TaskNotFoundException) {
         throw error
       }
-      throw new HttpException('Failed to retrieve task', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(ERRORS.RETRIVE_TASK_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -89,11 +90,10 @@ export class TaskService {
   async findTasksNearby(latitude: number, longitude: number, radius: number): Promise<Task[]> {
     try {
       return this.taskRepository.query(`
-        SELECT * FROM task
-        WHERE ST_DWithin(location, ST_MakePoint($1, $2)::geography, $3)
+        ${QUERIES.FIND_NEARBY_TASKS}
       `, [latitude, longitude, radius]);
     } catch (error) {
-      throw new HttpException('Failed to find nearby tasks', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(ERRORS.FAILED_TO_FIND_NEARBY_TASK, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

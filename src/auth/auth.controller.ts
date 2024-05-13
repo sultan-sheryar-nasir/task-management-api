@@ -16,9 +16,6 @@ export class AuthController {
     @Post('login')
     async login(@Body('username') username: string, @Body('password') password: string) {
         const user = await this.authService.validateUser(username, password);
-        if (!user) {
-            return { message: 'Invalid username or password' };
-        }
         return this.authService.login(user);
     }
 
