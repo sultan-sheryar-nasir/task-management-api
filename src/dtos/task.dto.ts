@@ -7,16 +7,20 @@ class Location {
     @IsArray()
     @ArrayMinSize(2)
     @ArrayMaxSize(2)
+    @ApiProperty({required : true, example: [40.7128, -74.0060]})
     coordinates: number[];
 
+    @ApiProperty({required : true, example: "Point"})
     @IsString()
     type: string
 }
 
 export class CreateTaskDto {
+    @ApiProperty({required : true})
     @IsNotEmpty()
     description: string;
 
+    @ApiProperty({required : true})
     @IsObject()
     @ValidateNested()
     @Type(() => Location)

@@ -27,13 +27,13 @@ The Trash Collection Task API is a RESTful API built with NestJS, PostgreSQL. It
 4. Run the application: `npm run start:dev`
 
 
-### Swagger Documentation
-
-Once the application is running, navigate to `/api` to access the Swagger documentation. Here, you can explore all available endpoints, their parameters, and make test requests.
-
 ### Postman Collection
 
 You can simply import the collection file src/utils/LiveEO.postman_collection.json in your postman
+
+### Swagger Documentation
+
+Once the application is running, navigate to `/api` to access the Swagger documentation. Here, you can explore all available endpoints, their parameters. Due to limited time swagger documentation is not so rich so I recommend considering Postman Collection which have all the endpoints with sample requests.
 
 ### API Endpoints
 
@@ -46,3 +46,7 @@ You can simply import the collection file src/utils/LiveEO.postman_collection.js
 
 - **POST /auth/register**: Register new user.
 - **POST /auth/login**: Get JWT Token.
+
+### Other Documents
+
+ - Under the root of project you will find a documents folder, Inside this folder We have LiveEO Assessment Diagram and Stages document.

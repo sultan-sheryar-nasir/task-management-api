@@ -11,7 +11,9 @@ export class TaskController {
   constructor(private readonly taskService: TaskService) { }
 
   @Get()
-  async findAll(@Query('isCompleted') isCompleted?: boolean): Promise<Task[]> {
+  async findAll(
+    @Query('isCompleted') isCompleted?: boolean
+  ): Promise<Task[]> {
     if (isCompleted !== undefined) {
       return await this.taskService.findAllTasksByCompletedStatus(isCompleted);
     } else {
