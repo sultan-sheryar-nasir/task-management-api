@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, ParseFloatPipe, Query, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, ParseFloatPipe, Query, HttpCode, NotFoundException, BadRequestException } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { Task } from './task.entity';
 import { ApiTags } from '@nestjs/swagger';
@@ -13,15 +13,15 @@ export class TaskController {
   @Get()
   async findAll(@Query('isCompleted') isCompleted?: boolean): Promise<Task[]> {
     if (isCompleted !== undefined) {
-      return this.taskService.findAllTasksByCompletedStatus(isCompleted);
+      return await this.taskService.findAllTasksByCompletedStatus(isCompleted);
     } else {
-      return this.taskService.findAll();
+      return await this.taskService.findAll();
     }
   }
 
   @Post()
   async create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.taskService.create(createTaskDto);
+    return await this.taskService.create(createTaskDto);
   }
 
   @Get('nearby')
@@ -29,22 +29,22 @@ export class TaskController {
     @Query('latitude', ParseFloatPipe) latitude: number,
     @Query('longitude', ParseFloatPipe) longitude: number,
     @Query('radius', ParseFloatPipe) radius: number,): Promise<Task[]> {
-    return this.taskService.findTasksNearby(latitude, longitude, radius);
+    return await this.taskService.findTasksNearby(latitude, longitude, radius);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Task> {
-    return this.taskService.findById(+id);
+    return await this.taskService.findById(+id);
   }
 
   @Put(':id')
   async update(@Param('id') id: number, @Body() updateTaskDto: UpdateTaskDto): Promise<Task> {
-    return this.taskService.update(+id, updateTaskDto);
+    return await this.taskService.update(+id, updateTaskDto);
   }
 
   @HttpCode(204)
   @Delete(':id')
   async remove(@Param('id') id: number): Promise<void> {
-    return this.taskService.delete(+id);
+    await this.taskService.delete(+id);
   }
 }
