@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TaskController } from '../tasks/task.controller';
 import { TaskService } from '../tasks/task.service';
 import { Task } from '../tasks/task.entity';
+import { CreateTaskDto, UpdateTaskDto } from '../dtos/task.dto';
 
 describe('TaskController', () => {
     let controller: TaskController;
@@ -36,7 +37,7 @@ describe('TaskController', () => {
   
     describe('create', () => {
       it('should create a new task', async () => {
-        const taskData: Partial<Task> = { description: 'Task description' };
+        const taskData: CreateTaskDto = { description: 'Task description', location: { type: 'Point', coordinates: [0, 0] } };
         const createdTask: Task = { id: 1, description: 'Task description', isCompleted: false, location: { type: 'Point', coordinates: [0, 0] } };
         jest.spyOn(taskService, 'create').mockResolvedValue(createdTask);
   
@@ -91,7 +92,7 @@ describe('TaskController', () => {
   
     describe('findOne', () => {
       it('should return the task with the specified ID', async () => {
-        const taskId = '1';
+        const taskId = 1;
         const task: Task = { id: 1, description: 'Task 1', isCompleted: false, location: { type: 'Point', coordinates: [0, 0] } };
         jest.spyOn(taskService, 'findById').mockResolvedValue(task);
   
@@ -101,7 +102,7 @@ describe('TaskController', () => {
       });
   
       it('should return null if task with the specified ID does not exist', async () => {
-        const taskId = '999'; // Non-existent ID
+        const taskId = 999; // Non-existent ID
         jest.spyOn(taskService, 'findById').mockResolvedValue(null);
   
         const result = await controller.findOne(taskId);
@@ -112,8 +113,8 @@ describe('TaskController', () => {
   
     describe('update', () => {
         it('should update the task with the specified ID', async () => {
-          const taskId = '1';
-          const updatedTaskData: Partial<Task> = { description: 'Updated Task Description' };
+          const taskId = 1;
+          const updatedTaskData: UpdateTaskDto = { description: 'Updated Task Description' };
           const updatedTask: Task = { id: 1, description: 'Updated Task Description', isCompleted: false, location: { type: 'Point', coordinates: [0, 0] } };
           jest.spyOn(taskService, 'update').mockResolvedValue(updatedTask);
       
@@ -123,7 +124,7 @@ describe('TaskController', () => {
         });
       
         it('should return null if task with the specified ID does not exist', async () => {
-          const taskId = '999'; // Non-existent ID
+          const taskId = 999; // Non-existent ID
           const updatedTaskData: Partial<Task> = { description: 'Updated Task Description' };
           jest.spyOn(taskService, 'update').mockResolvedValue(null);
       
@@ -135,7 +136,7 @@ describe('TaskController', () => {
       
       describe('remove', () => {
         it('should delete the task with the specified ID', async () => {
-          const taskId = '1';
+          const taskId = 1;
           jest.spyOn(taskService, 'delete').mockResolvedValue(undefined);
       
           const result = await controller.remove(taskId);
@@ -144,7 +145,7 @@ describe('TaskController', () => {
         });
       
         it('should return null if task with the specified ID does not exist', async () => {
-          const taskId = '999'; // Non-existent ID
+          const taskId = 999; // Non-existent ID
           jest.spyOn(taskService, 'delete').mockResolvedValue(undefined);
       
           const result = await controller.remove(taskId);

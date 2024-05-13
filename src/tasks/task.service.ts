@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, getConnection } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Task } from './task.entity';
-
+import { CreateTaskDto, UpdateTaskDto } from '../dtos/task.dto';
+// Need to add exception handling
 @Injectable()
 export class TaskService {
   constructor(
@@ -11,15 +12,22 @@ export class TaskService {
   ) { }
 
   async findAll(): Promise<Task[]> {
-    return this.taskRepository.find();
+    try {
+      return this.taskRepository.find();
+    } catch (error) {
+    }
   }
 
   async findAllTasksByCompletedStatus(isCompleted: boolean): Promise<Task[]> {
     return this.taskRepository.find({ where: { isCompleted } });
   }
 
-  async create(taskData: Partial<Task>): Promise<Task> {
-    const task = this.taskRepository.create(taskData);
+  async create(taskData: CreateTaskDto): Promise<Task> {
+    const { description, location } = taskData;
+    const task = new Task();
+    task.description = description;
+    task.location = { type: 'Point', coordinates: location.coordinates };
+    task.isCompleted = false;
     return this.taskRepository.save(task);
   }
 
@@ -27,9 +35,13 @@ export class TaskService {
     return this.taskRepository.findOne({ where: { id } });
   }
 
-  async update(id: number, taskData: Partial<Task>): Promise<Task> {
-    await this.taskRepository.update(id, taskData);
-    return this.taskRepository.findOne({ where: { id } });
+  async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
+    await this.taskRepository.update(id, updateTaskDto);
+    let data = await this.taskRepository.findOne({ where: { id } });
+    if(!data){
+      throw new HttpException(`No task found against taskID: ${id}`, HttpStatus.NOT_FOUND)
+    }
+    return data;
   }
 
   async delete(id: number): Promise<void> {

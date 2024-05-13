@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, ParseFloatPipe, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, ParseFloatPipe, Query, HttpCode } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { Task } from './task.entity';
 import { ApiTags } from '@nestjs/swagger';
-import { Public } from '../utils/constants';
+import { CreateTaskDto, UpdateTaskDto } from '../dtos/task.dto';
+
 
 @ApiTags('Tasks')
 @Controller('tasks')
@@ -19,8 +20,8 @@ export class TaskController {
   }
 
   @Post()
-  async create(@Body() taskData: Partial<Task>): Promise<Task> {
-    return this.taskService.create(taskData);
+  async create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
+    return this.taskService.create(createTaskDto);
   }
 
   @Get('nearby')
@@ -32,17 +33,18 @@ export class TaskController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Task> {
+  async findOne(@Param('id') id: number): Promise<Task> {
     return this.taskService.findById(+id);
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() taskData: Partial<Task>): Promise<Task> {
-    return this.taskService.update(+id, taskData);
+  async update(@Param('id') id: number, @Body() updateTaskDto: UpdateTaskDto): Promise<Task> {
+    return this.taskService.update(+id, updateTaskDto);
   }
 
+  @HttpCode(204)
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<void> {
+  async remove(@Param('id') id: number): Promise<void> {
     return this.taskService.delete(+id);
   }
 }
