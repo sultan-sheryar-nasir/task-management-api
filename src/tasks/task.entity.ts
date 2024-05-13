@@ -13,4 +13,7 @@ export class Task {
 
   @Column({ default: false })
   isCompleted: boolean;
+
+  @Column({nullable: true})
+  workerId?: number;
 }
